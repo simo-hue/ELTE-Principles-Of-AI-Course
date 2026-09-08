@@ -1,0 +1,27 @@
+[workspace]
+authors = ["Balazs Pinter <noreply@inf.elte.hu>", "Balazs Szalontai <noreply@inf.elte.hu>", "Silva Matti <noreply@inf.elte.hu"]
+channels = ["conda-forge"]
+name = "practice"
+platforms = ["win-64", "linux-64", "osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+jupyterlab = ">=4.4.6,<5"
+jupytext = ">=1.17.3,<2"
+matplotlib = ">=3.10.6,<4"
+scikit-learn = ">=1.7.1,<2"
+nltk = ">=3.9.1,<4"
+numpy = ">=2.3.2,<3"
+scipy = ">=1.16.1,<2"
+pandas = ">=2.3.2,<3"
+spacy = ">=3.8.7,<4"
+pip = ">=25.2,<26"
+python = ">=3.12.11,<3.13"
+
+[pypi-dependencies]
+freesimplegui = ">=5.2.0.post1, <6"
+tensorflow = ">=2.18.0,<3"
+openpyxl = ">=3.1.5,<4"
+gensim = ">=4.4.0,<5"
