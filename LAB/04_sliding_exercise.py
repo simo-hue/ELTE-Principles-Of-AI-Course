@@ -114,13 +114,31 @@ def hill_climbing(
     """
     current = problem.start_state()
     parent = problem.nil
+
     while not problem.is_goal_state(current):
         yield current #yielding each state
         next_states = problem.next_states(current)
+        
         # TODO:
         # if with three branches
         # Hint: pseudocode from lecture 3 (local search), slide 5
         #       return None if no solution can be found
+        
+        best_prossimo = None
+        best_prossimo_value = float("inf")
+
+        for state in next_states:
+            if f(state) < best_prossimo_value:
+                best_prossimo = state
+                best_prossimo_value = f(state)
+        
+        if best_prossimo_value >= f(current):
+            return None
+
+        # Before loosing track
+        parent = current
+        current = best_prossimo
+
     yield current
 
 
