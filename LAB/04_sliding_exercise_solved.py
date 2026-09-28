@@ -9,6 +9,9 @@ search.
 
 You only need to modify the code in the "YOUR CODE HERE" sections. """
 
+import typing_extensions
+import numbers
+from sys import _current_exceptions
 import random
 from functools import partial
 
@@ -168,6 +171,58 @@ def tabu_search(
     #       return None if no solution is found
     #       don't forget to yield each state
     #       don't forget about set operations (such as subtraction)
+    curr = problem.start_state()
+    parent = problem.nil
+    
+    tabu_l = []
+
+    best_encountered = curr
+    best_encountered_value = f(curr)
+
+    steps = 0
+    
+    while not problem.is_goal_state(curr):
+        yield curr
+
+        # What can I really do?
+        possible_next = problem.next_states(curr) - set(tabu_l)
+
+        if not possible_next:
+            return None
+
+        best_prossimo = None
+        best_prossimo_value = float("inf")
+
+        for state in possible_next:
+            # Update part
+            if f(state) < best_prossimo_value:
+                best_prossimo = state
+                best_prossimo_value = f(state)
+
+        # Keep up to date the TABU STET:
+        tabu_l.append(curr)
+        
+        # I don't want to store everything, I have a limit
+        if(len(tabu_l) > tabu_len):
+            tabu_l.pop(0)
+
+        # Is it a new best?
+        if best_prossimo_value < best_encountered_value:
+            best_encountered = best_prossimo
+            best_encountered_value = best_prossimo_value
+            steps = 0
+        else:
+            steps += 1
+
+
+        # I don't want to run forever
+        if steps >= long_time:
+            return None
+
+        # try the move
+        curr = best_prossimo
+        
+    yield curr
 
 
 # heuristics
