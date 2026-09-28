@@ -167,8 +167,24 @@ def misplaced(state: State) -> int:
 
 
 def manhattan(state: State) -> int:
-    return 0 # TODO
     # Hint: description on lecture 3 (local search) slide 22
+    # GOAL: (1, 2, 3, 8, 0, 4, 7, 6, 5)
+    
+    for tile_number in range(1,9):
+
+        # 1D
+        curr_index = state.index(tile_number)
+        goal_index = goal.index(tile_number)
+
+        # 2D
+        curr_x = curr_index % 3
+        curr_y = curr_index // 3
+        goal_x = goal_index % 3
+        goal_y = goal_index // 3
+
+        diff += abs(curr_x - goal_x) + abs(curr_y - goal_y)
+
+    return diff
 
 # END OF YOUR CODE
 
