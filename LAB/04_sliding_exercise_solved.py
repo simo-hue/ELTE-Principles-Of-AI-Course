@@ -243,6 +243,8 @@ def manhattan(state: State) -> int:
     # Hint: description on lecture 3 (local search) slide 22
     # GOAL: (1, 2, 3, 8, 0, 4, 7, 6, 5)
     
+    diff = 0
+    
     for tile_number in range(1,9):
 
         # 1D
