@@ -219,12 +219,17 @@ class QueensProblemAttack(QueensProblem):
         #       We yield a next board not only if the square has no queen,
         #           but we also check if the square is under attack or not!
         board = state
+        
         if board.nqueens() >= self.n:
             return None
+        
         for i, row in enumerate(board):
             for j, square in enumerate(row):
                 if not square.has_queen() and not square.is_under_attack():
+                    
+                    # NOT JUST A REFERENCE
                     next_board = copy.deepcopy(board)
+                    
                     next_board[i, j].set_queen()
                     next_board.update_attack()
                     yield next_board
@@ -239,13 +244,23 @@ class QueensProblemRowByRow(QueensProblem):
 
     def next_states(self, state: RowByRowState) -> Generator[RowByRowState, None, None]:
         board, row_ind = state  # the state consists of a board and the row index of the next row in which there is no queen
-        pass
+
         # TODO
         # Hint: Very similar to previous implementations of next_sates
         #       We have only one loop for the cells of the next row,
         #           we consider the index of next row fixed (row_ind)
         #       In order to keep count of the next row to be processed,
         #           we yield not only the board, but an incremented row index as well.
+        board, row_ind = state
+        
+        for j in range(board.n):                    
+            square = board[row_ind, j]         
+            
+            if not square.is_under_attack():
+                next_board = copy.deepcopy(board)
+                next_board[row_ind, j].set_queen()
+                next_board.update_attack()
+                yield (next_board, row_ind + 1)                       
 
     def is_goal_state(self, state: RowByRowState) -> bool:
         board, row_ind = state
