@@ -336,10 +336,10 @@ class EatDonutsProblem(SearchProblem):
     and then get to the door."""
 
     def __init__(self, game_logic: GameLogic):
-        pass # TODO
         # Hint: Almost identical to the __init__ of the CatToDoorProblem
         #       You need to also consider the donut positions along with the cat positions
         #       The State is now EatDonutsState, use this info as a hint
+        
 
     def target_positions(self, state : EatDonutsState) -> tuple[Position, ...]:
         """Return the positions of the donuts if there are any left,
