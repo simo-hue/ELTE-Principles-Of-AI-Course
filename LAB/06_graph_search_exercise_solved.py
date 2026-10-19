@@ -189,17 +189,27 @@ def graph_search(problem, f) -> tuple[list[Actions], list[State]]:
         OPEN = {start}
         pi : dict[State,Optional[State]] = {start: None} # dictionary to keep track of parent of nodes
         expanded_nodes : list[State] = []
+        
         while True:
             if not OPEN:
-                # return the goal node, the dict of parents and expanded nodes
                 return None, pi, expanded_nodes
-            pass # TODO
-            # Hint: Pseudocode from lecture 5 (graphsearch) on slide 10
-            #       Make sure to be familiar with sets in Python! (- operator, add)
-            #       Add a node to the list of expanded_nodes once a node gets 
-            #       selected for expanding!
-            #       In these search problems, the cost is always 1
-            #       (all moves cost the same)
+            
+                            # return the goal node, the dict of parents and expanded nodes
+            n = min(OPEN, key=f)
+            expanded_nodes.append(n)
+            OPEN.remove(n)
+                
+            if problem.is_goal_state(n):
+                return n, pi, expanded_nodes
+            
+            new_children = problem.next_states(n) - G
+            
+            for children in new_children:
+                pi[children] = n
+                G.add(children)
+                OPEN.add(children)
+                g[children] = g[n] + 1
+
 
     def reconstruct(goal_node, pi) -> tuple[list[Actions], list[State]]:
         """Reconstructs the path and the actions from the goal node and the
@@ -336,6 +346,7 @@ class EatDonutsProblem(SearchProblem):
     and then get to the door."""
 
     def __init__(self, game_logic: GameLogic):
+        pass
         # Hint: Almost identical to the __init__ of the CatToDoorProblem
         #       You need to also consider the donut positions along with the cat positions
         #       The State is now EatDonutsState, use this info as a hint
