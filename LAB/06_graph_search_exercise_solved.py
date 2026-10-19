@@ -249,7 +249,7 @@ class EvaluationFunctionDFS(EvaluationFunction):
 
 class EvaluationFunctionBFS(EvaluationFunction):
     def __call__(self, node):
-        pass # TODO
+        return self.g[node]
 
 
 class EvaluationFunctionLF(EvaluationFunction):
@@ -258,7 +258,7 @@ class EvaluationFunctionLF(EvaluationFunction):
         self.h = h
 
     def __call__(self, node):
-        pass # TODO
+        return self.h(node)
 
 
 class EvaluationFunctionAStar(EvaluationFunction):
@@ -267,7 +267,7 @@ class EvaluationFunctionAStar(EvaluationFunction):
         self.h = h
 
     def __call__(self, node):
-        pass # TODO
+        return self.h(node) + self.g[node]
 
 
 # The GUI runs the search algorithms through these functions.
