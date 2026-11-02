@@ -117,88 +117,60 @@ def random_move(board: GomokuBoard) -> None:
     row, col = zero_ind[0][index], zero_ind[1][index]
     board[row,col] = 2
 
-# YOUR CODE HERE
+# Minimax and alpha-beta use the same scoring convention:
+# X wins -> -1, O wins -> +1, draw -> 0.
+# Each solution is a list of boards starting with the immediate next move.
 
 MiniMaxReturnType = tuple[Optional[int], Optional[list[GomokuBoard]]]
-# A tuple of an integer (or None) and a list if boards (or None)
-# The list of boards contains the solution and
-#   the integer describes the evaluation value of that solution
 
-# TODO: implement the minimax algorithm
+
 def minimax(board: GomokuBoard) -> None:
-    """Do the next step computed by the minimax algorithm."""
+    """Play O's best next move using the minimax algorithm."""
+
     def value(board: GomokuBoard, player: int) -> MiniMaxReturnType:
         if player == 2:
             return maximize(board, player)
         return minimize(board, player)
 
     def minimize(board: GomokuBoard, player: int) -> MiniMaxReturnType:
-        # Hint: Check MiniMaxReturnType as a hint for what to return!
-        #       Is the game over? Do we have a winner? Is it a draw?
-        #       If it is not over, check the next possible states (boards)!
-        if board.winner() is not None:
-            if board.winner() == 1:
+        winner = board.winner()
+        if winner is not None:
+            if winner == 1:
                 return (-1, None)
-            elif board.winner() == 2:
+            if winner == 2:
                 return (1, None)
-            else:
-                return (0, None)
-        
-        #       If it is over, the minimax value should be a positive or 
-        #           a negative number, depending on the winner; or with 0 if draw
-        else:
-                best_score = None
-                best_solution = None
-                
-                for next_board in board.next_boards(player):
-                    score, solution = value(
-                    next_board,
-                    switch_player(player)
-                    )
-                    
-                    if best_score is None or score < best_score:
-                        best_score = score
-                        best_solution = [next_board] + (solution or [])
-                    
-        #       Finally, return both the min value and the corresponding solution
-        return (
-            best_score,
-            best_solution
-        )
+            return (0, None)
+
+        best_score = None
+        best_solution = None
+
+        for next_board in board.next_boards(player):
+            score, solution = value(next_board, switch_player(player))
+            if best_score is None or score < best_score:
+                best_score = score
+                best_solution = [next_board] + (solution or [])
+
+        return (best_score, best_solution)
 
     def maximize(board: GomokuBoard, player: int) -> MiniMaxReturnType:
-        # Hint: Check MiniMaxReturnType as a hint for what to return!
-                #       Is the game over? Do we have a winner? Is it a draw?
-                #       If it is not over, check the next possible states (boards)!
-                if board.winner() is not None:
-                    if board.winner() == 1:
-                        return (-1, None)
-                    elif board.winner() == 2:
-                        return (1, None)
-                    else:
-                        return (0, None)
-                
-                #       If it is over, the minimax value should be a positive or 
-                #           a negative number, depending on the winner; or with 0 if draw
-                else:
-                        best_score = None
-                        best_solution = None
-                        
-                        for next_board in board.next_boards(player):
-                            score, solution = value(
-                            next_board,
-                            switch_player(player)
-                            )
-                            
-                            if best_score is None or score > best_score:
-                                best_score = score
-                                best_solution = [next_board] + (solution or [])
-                            
-                #       Finally, return both the min value and the corresponding solution
-                return (
-                    best_score,
-                    best_solution
-                )
+        winner = board.winner()
+        if winner is not None:
+            if winner == 1:
+                return (-1, None)
+            if winner == 2:
+                return (1, None)
+            return (0, None)
+
+        best_score = None
+        best_solution = None
+
+        for next_board in board.next_boards(player):
+            score, solution = value(next_board, switch_player(player))
+            if best_score is None or score > best_score:
+                best_score = score
+                best_solution = [next_board] + (solution or [])
+
+        return (best_score, best_solution)
 
     _, solution = value(board, 2)
     if solution is not None:
@@ -206,12 +178,75 @@ def minimax(board: GomokuBoard) -> None:
 
 
 def alpha_beta(board: GomokuBoard) -> None:
-    """Do the next step computed by the alpha-beta search."""
-    pass # TODO
-    # Hint: Implement the alpha-beta pruning in the minimax algorithm
-    #       You can start by just copying your minimax algorithm here
-    #       Introduce alpha and beta as function parameters in each 
-    #       implemented function
+    """Play O's best next move using minimax with alpha-beta pruning."""
+
+    def value(board: GomokuBoard, player: int,
+              alpha: float, beta: float) -> MiniMaxReturnType:
+        if player == 2:
+            return maximize(board, player, alpha, beta)
+        return minimize(board, player, alpha, beta)
+
+    def minimize(board: GomokuBoard, player: int,
+                 alpha: float, beta: float) -> MiniMaxReturnType:
+        winner = board.winner()
+        if winner is not None:
+            if winner == 1:
+                return (-1, None)
+            if winner == 2:
+                return (1, None)
+            return (0, None)
+
+        best_score = None
+        best_solution = None
+
+        for next_board in board.next_boards(player):
+            score, solution = value(
+                next_board, switch_player(player), alpha, beta
+            )
+            if best_score is None or score < best_score:
+                best_score = score
+                best_solution = [next_board] + (solution or [])
+
+            # MIN has a better (smaller) bound after considering this move.
+            beta = min(beta, score)
+            if alpha >= beta:
+                break  # Remaining moves cannot improve MAX's decision.
+
+        return (best_score, best_solution)
+
+    def maximize(board: GomokuBoard, player: int,
+                 alpha: float, beta: float) -> MiniMaxReturnType:
+        winner = board.winner()
+        if winner is not None:
+            if winner == 1:
+                return (-1, None)
+            if winner == 2:
+                return (1, None)
+            return (0, None)
+
+        best_score = None
+        best_solution = None
+
+        for next_board in board.next_boards(player):
+            score, solution = value(
+                next_board, switch_player(player), alpha, beta
+            )
+            if best_score is None or score > best_score:
+                best_score = score
+                best_solution = [next_board] + (solution or [])
+
+            # MAX has a better (larger) bound after considering this move.
+            alpha = max(alpha, score)
+            if alpha >= beta:
+                break  # Remaining moves cannot improve MIN's decision.
+
+        return (best_score, best_solution)
+
+    alpha = float('-inf')
+    beta = float('inf')
+    _, solution = value(board, 2, alpha, beta)
+    if solution is not None:
+        board.board = solution[0].board
 
 
 # END OF YOUR CODE
@@ -298,9 +333,8 @@ while True:  # Event Loop
         break
     if event == 'Restart':
         GAME_LOGIC.move_ai = algorithms[values['algorithm']]
-        BOARD.reset()
+        GAME_LOGIC.reset()
         BOARD_GUI.update()
-        # change current player
     if isinstance(event, tuple):
         row, col = event
         winner = GAME_LOGIC.play(row, col)
@@ -313,6 +347,7 @@ while True:  # Event Loop
             else:
                 sg.Popup("It's a draw!", font=('Helvetica', '18'), location=(150,150))
             GAME_LOGIC.reset()
+            BOARD_GUI.update()
 
 
 window.Close()
